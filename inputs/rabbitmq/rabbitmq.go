@@ -376,6 +376,12 @@ func (ins *Instance) Gather(slist *types.SampleList) {
 }
 
 func (ins *Instance) requestEndpoint(u string) ([]byte, error) {
+	key := []byte(inputs.GetEncryptKey())
+	decryptedPassword, err := inputs.DecryptPassword(key, ins.Password)
+	if err != nil {
+		return nil, err
+	}
+
 	endpoint := ins.URL + u
 
 	if ins.DebugMod {
@@ -387,7 +393,7 @@ func (ins *Instance) requestEndpoint(u string) ([]byte, error) {
 		return nil, err
 	}
 
-	req.SetBasicAuth(ins.Username, ins.Password)
+	req.SetBasicAuth(ins.Username, decryptedPassword)
 
 	resp, err := ins.client.Do(req)
 	if err != nil {

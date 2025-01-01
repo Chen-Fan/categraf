@@ -62,6 +62,12 @@ func (ins *Instance) Init() error {
 		return types.ErrInstancesEmpty
 	}
 
+	key := []byte(inputs.GetEncryptKey())
+	decryptedPassword, err := inputs.DecryptPassword(key, ins.Password)
+	if err != nil {
+		return fmt.Errorf("failed to decrypt password: %v", err)
+	}
+	// log.Println(decryptedPassword)
 	if ins.UseTLS {
 		tlsConfig, err := ins.ClientConfig.TLSConfig()
 		if err != nil {
@@ -77,7 +83,7 @@ func (ins *Instance) Init() error {
 	if strings.HasSuffix(ins.Address, ".sock") {
 		net = "unix"
 	}
-	ins.dsn = fmt.Sprintf("%s:%s@%s(%s)/?%s", ins.Username, ins.Password, net, ins.Address, ins.Parameters)
+	ins.dsn = fmt.Sprintf("%s:%s@%s(%s)/?%s", ins.Username, decryptedPassword, net, ins.Address, ins.Parameters)
 	conf, err := mysql.ParseDSN(ins.dsn)
 	if err != nil {
 		return err

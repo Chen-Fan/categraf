@@ -199,7 +199,9 @@ func (ins *Instance) Gather(slist *types.SampleList) {
 				return
 			}
 			if ins.UserName != "" && ins.Password != "" {
-				EsUrl.User = url.UserPassword(ins.UserName, ins.Password)
+				key := []byte(inputs.GetEncryptKey())
+				decryptedPassword, _ := inputs.DecryptPassword(key, ins.Password)
+				EsUrl.User = url.UserPassword(ins.UserName, decryptedPassword)
 			}
 			exporter, err := collector.NewElasticsearchCollector(
 				[]string{},

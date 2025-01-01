@@ -93,13 +93,19 @@ func (ins *Instance) Init() error {
 		return err
 	}
 
+	key := []byte(inputs.GetEncryptKey())
+	decryptedPassword, err := inputs.DecryptPassword(key, ins.Password)
+	if err != nil {
+		return fmt.Errorf("failed to decrypt password: %v", err)
+	}
+
 	l := logrus.New()
 	l.SetLevel(level)
 
 	e, err := exporter.New(&exporter.Opts{
 		URI:                           string(ins.MongodbURI),
 		Username:                      ins.Username,
-		Password:                      ins.Password,
+		Password:                      decryptedPassword,
 		CollStatsNamespaces:           ins.CollStatsNamespaces,
 		IndexStatsCollections:         ins.IndexStatsCollections,
 		CollStatsLimit:                0,

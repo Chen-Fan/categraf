@@ -49,10 +49,16 @@ func (ins *Instance) Init() error {
 		return types.ErrInstancesEmpty
 	}
 
+	key := []byte(inputs.GetEncryptKey())
+	decryptedPassword, err := inputs.DecryptPassword(key, ins.Password)
+	if err != nil {
+		return fmt.Errorf("failed to decrypt password: %v", err)
+	}
+
 	redisOptions := &redis.Options{
 		Addr:     ins.Address,
 		Username: ins.Username,
-		Password: ins.Password,
+		Password: decryptedPassword,
 		PoolSize: ins.PoolSize,
 	}
 

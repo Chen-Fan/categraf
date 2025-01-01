@@ -2,9 +2,9 @@
 # interval = 15
 
 [[instances]]
-# address = "127.0.0.1:6379"
+address = "127.0.0.1:6379"
 # username = ""
-# password = ""
+password = "srZ83VybKNRgG4dtvmaJHJMCP8sSncZdWs6WXaMWhoyDu4iNs9mTgDgLbY3zvbtM"
 # pool_size = 2
 
 ## 是否开启slowlog 收集
